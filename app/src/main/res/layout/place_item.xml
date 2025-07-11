@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
+    android:layout_margin="12dp"
+    app:cardCornerRadius="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="18dp"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/placeName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="北京"
+            android:textSize="20sp"
+            android:textColor="?android:attr/textColorPrimary"/>
+        <TextView
+            android:id="@+id/placeAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="北京肇庆"
+            android:textSize="14sp"
+            android:layout_marginTop="10dp"
+            android:textColor="?android:attr/textColorSecondary"/>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
