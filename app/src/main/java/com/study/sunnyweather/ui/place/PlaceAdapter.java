@@ -1,5 +1,6 @@
 package com.study.sunnyweather.ui.place;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.study.sunnyweather.R;
 import com.study.sunnyweather.logic.model.Place;
+import com.study.sunnyweather.logic.model.Weather;
 import com.study.sunnyweather.ui.weather.WeatherActivity;
 
 import java.util.ArrayList;
@@ -37,13 +39,27 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
             public void onClick(View v) {
                 int position = viewHolder.getBindingAdapterPosition();
                 Place place = placeList.get(position);
-                Intent intent = new Intent(parent.getContext(), WeatherActivity.class);
-                intent.putExtra("location_lng", place.getLocation().getLng());
-                intent.putExtra("location_lat", place.getLocation().getLat());
-                intent.putExtra("place_name", place.getName());
+
+                Activity activity = fragment.getActivity();
+                if (activity instanceof WeatherActivity) {
+                    /* 在天气界面，更新 所选城市天气信息 */
+                    ((WeatherActivity) activity).drawerLayout.closeDrawers();
+                    ((WeatherActivity) activity).viewModel.locationLat = place.getLocation().getLat();
+                    ((WeatherActivity) activity).viewModel.locationLng = place.getLocation().getLng();
+                    ((WeatherActivity) activity).viewModel.placeName = place.getName();
+                    ((WeatherActivity) activity).refreshWeather();
+                } else {
+                    /* 跳转到天气界面 */
+                    Intent intent = new Intent(parent.getContext(), WeatherActivity.class);
+                    intent.putExtra("location_lng", place.getLocation().getLng());
+                    intent.putExtra("location_lat", place.getLocation().getLat());
+                    intent.putExtra("place_name", place.getName());
+                    fragment.startActivity(intent);
+                    if (activity != null) activity.finish();
+                    Log.d("测试", "Activity: "+activity);
+                }
                 // 保存选中的城市
                 fragment.viewModel.savePlace(place);
-                fragment.startActivity(intent);
             }
         });
         return viewHolder;

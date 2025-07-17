@@ -1,10 +1,14 @@
 package com.study.sunnyweather.ui.weather;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,10 +18,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.gson.Gson;
 import com.study.sunnyweather.R;
 import com.study.sunnyweather.logic.model.DailyResponse;
 import com.study.sunnyweather.logic.model.RealtimeResponse;
@@ -28,7 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class WeatherActivity extends AppCompatActivity {
-    private WeatherViewModel viewModel;
+    public WeatherViewModel viewModel;
     private ScrollView weatherLayout;
     private RelativeLayout nowLayout;
     private FrameLayout titleLayout;
@@ -46,13 +56,30 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView ultravioletText;
     private ImageView carWashingImg;
     private TextView carWashingText;
+    private SwipeRefreshLayout swipeRefresh;
+    private Button navBtn;
+    public DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_weather);
+        initView();
+        ViewCompat.setOnApplyWindowInsetsListener(nowLayout, (v, insets) -> {
+            // 处理系统栏边距
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
+        /* 背景图 与 状态栏 融合
+        * View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN： 允许布局延伸到 状态栏区域
+        * View.SYSTEM_UI_FLAG_LAYOUT_STABLE：保持布局稳定，就算状态栏、导航栏出现或消失，也别动我的布局尺寸和位置！
+        * */
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        // 设置 状态栏为透明色
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
 
         viewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
         Intent intent = getIntent();
@@ -70,9 +97,24 @@ public class WeatherActivity extends AppCompatActivity {
             else {
                 Toast.makeText(this, "获取天气信息失败", Toast.LENGTH_SHORT).show();
             }
+            swipeRefresh.setRefreshing(false);
         });
+
+        // 设置刷新进度条样式、监听事件
+        swipeRefresh.setColorSchemeResources(R.color.purple_500);
+        refreshWeather();
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshWeather();
+            }
+        });
+    }
+
+    /* 刷新天气 */
+    public void refreshWeather() {
         viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat);
-        initView();
+        swipeRefresh.setRefreshing(true);
     }
 
     private void ShowWeatherInfo(Weather weather) {
@@ -99,7 +141,7 @@ public class WeatherActivity extends AppCompatActivity {
 
             View view = LayoutInflater.from(this).inflate(R.layout.forecast_item, forecastLayout, false);
             // 找 子项 控件
-            TextView dateInfo = (TextView)  view.findViewById(R.id.dateInfo);
+            TextView dateInfo = (TextView) view.findViewById(R.id.dateInfo);
             ImageView skyIcon = (ImageView) view.findViewById(R.id.skyIcon);
             TextView skyInfo = (TextView) view.findViewById(R.id.skyInfo);
             TextView temperatureInfo = (TextView) view.findViewById(R.id.temperatureInfo);
@@ -141,5 +183,40 @@ public class WeatherActivity extends AppCompatActivity {
         ultravioletText = (TextView) findViewById(R.id.ultravioletText);
         carWashingImg = (ImageView) findViewById(R.id.carWashingImg);
         carWashingText = (TextView) findViewById(R.id.carWashingText);
+        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        navBtn = (Button) findViewById(R.id.navBtn);
+
+        // 打开抽屉
+        navBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+        // 抽屉滑动事件
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+                /* 菜单被隐藏时，也要隐藏输入法 */
+                InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                manager.hideSoftInputFromWindow(drawerView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
     }
 }

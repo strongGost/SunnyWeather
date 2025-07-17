@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="530dp"
-    android:id="@+id/nowLayout"
-    >
+    android:id="@+id/nowLayout">
     <!-- 城市名称 -->
     <FrameLayout
         android:id="@+id/titleLayout"
@@ -20,7 +19,16 @@
             android:textColor="@color/white"
             android:maxLines="1"
             />
+        <!-- 切换城市按钮 -->
+        <Button
+            android:id="@+id/navBtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_home"
+            android:layout_marginStart="15dp"
+            android:layout_gravity="center_vertical"/>
     </FrameLayout>
+
 
     <!-- 今日 天气 各项指数 -->
     <LinearLayout

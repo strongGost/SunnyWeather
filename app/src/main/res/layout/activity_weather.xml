@@ -1,25 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- 抽屉布局， 控件一：主屏展示、控件二：滑动副屛展示 -->
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".ui.weather.WeatherActivity"
-    android:id="@+id/weatherLayout"
-    android:scrollbars="none"
-    android:overScrollMode="never"
-    android:visibility="invisible">
-    <LinearLayout
+    android:layout_height="match_parent"
+    android:id="@+id/drawerLayout">
+
+    <!-- 控件一 主屏：下拉刷新 + 内容页 -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <!-- 今天天气 -->
-        <include layout="@layout/now"/>
-        <!-- 未来天气 -->
-        <include layout="@layout/forecast"/>
-        <!-- 生活指数 -->
-        <include layout="@layout/life_index"/>
+        android:layout_height="match_parent"
+        android:id="@+id/swipeRefresh">
+        <!-- 天气内容 -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".ui.weather.WeatherActivity"
+            android:id="@+id/weatherLayout"
+            android:scrollbars="none"
+            android:overScrollMode="never"
+            android:visibility="invisible">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!-- 今天天气 -->
+                <include layout="@layout/now"/>
+                <!-- 未来天气 -->
+                <include layout="@layout/forecast"/>
+                <!-- 生活指数 -->
+                <include layout="@layout/life_index"/>
 
-    </LinearLayout>
+            </LinearLayout>
 
-</ScrollView>
+        </ScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- 控件二 副屛： 右滑菜单 -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/placeFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@color/purple_500"
+        android:name="com.study.sunnyweather.ui.place.PlaceFragment"
+        android:layout_gravity="start"
+        android:layout_marginTop="25dp">
+<!--        <fragment-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_marginTop="25dp"/>-->
+
+    </androidx.fragment.app.FragmentContainerView>
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.study.sunnyweather.MainActivity;
 import com.study.sunnyweather.R;
 import com.study.sunnyweather.logic.model.Place;
 import com.study.sunnyweather.ui.weather.WeatherActivity;
@@ -53,8 +54,8 @@ public class PlaceFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(PlaceViewModel.class);
         Log.d("fragment", ": " + viewModel);
 
-        // 直接跳转到上次查看的城市
-        if (viewModel.isPlaceSaved()) {
+        // 主界面、且上次城市记录保留
+        if ((getActivity() instanceof MainActivity) && viewModel.isPlaceSaved()) {
             Place place = viewModel.getSavedPlace();
             Intent intent = new Intent(getContext(), WeatherActivity.class);
             intent.putExtra("location_lng", place.getLocation().getLng());
