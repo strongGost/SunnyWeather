@@ -9,6 +9,7 @@ import retrofit2.http.Query;
 
 /**
  * Retrofit 接口文件
+ *  搜索城市
  */
     public interface PlaceService {
         @GET("v2/place?&token=" + SunnyWeatherApplication.TOKEN + "&lang=zh_CN")

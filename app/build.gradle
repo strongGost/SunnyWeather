@@ -29,6 +29,7 @@ android {
 }
 
 dependencies {
+
     /* ui */
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
@@ -41,6 +42,9 @@ dependencies {
     /* retrofit */
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
     implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
+    /* okhttp 日志拦截器 */
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
+
 
     implementation libs.appcompat
     implementation libs.material
